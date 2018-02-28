@@ -16,7 +16,7 @@
 
 ## 3.使用
 
-  1. [接口详情](https://gitee.com/aalinyu/ipaddress/blob/master/src/main/java/org/aalin/common/ip/IpLookup.java)**
+  1. [接口详情](https://gitee.com/aalinyu/ipaddress/blob/master/src/main/java/org/aalin/common/ip/IpLookup.java)
   2. 使用方法
    `IpLookupResult result = DefaultIpLookup.getInstance().lookup("11.23.56.34",false);`
    

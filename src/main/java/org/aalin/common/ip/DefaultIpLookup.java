@@ -27,18 +27,21 @@ public class DefaultIpLookup implements IpLookup {
     private DefaultIpLookup() {
     }
 
-    public static DefaultIpLookup getInstance() {
+    public static DefaultIpLookup newInstance() {
         return IpLookupImplHolder.INSTANCE;
     }
 
     @Override
     public IpLookupResult lookup(String ip) {
-
-        return lookup(ip, false);
+        return lookupLocal(ip, false);
     }
 
     @Override
-    public IpLookupResult lookup(String ip, boolean isOnlyLookupLocal) {
+    public IpLookupResult lookupLocal(String ip) {
+        return lookupLocal(ip, true);
+    }
+
+    protected IpLookupResult lookupLocal(String ip, boolean lookupLocal) {
         IpLookupResult ipLookupResult = new IpLookupResult();
         try {
             if (ip == null || "".equals(ip)) {
@@ -50,19 +53,19 @@ public class DefaultIpLookup implements IpLookup {
             if (ipLookupProvider == null) {
                 ipLookupProvider = IpLookupProvider.getInstance();
             }
-            if (isOnlyLookupLocal) {
+            if (lookupLocal) {
                 ipLookupResult = getLocalLookupResult(ipLookupResult, ip);
             } else {
                 /** 查询顺序 1、新浪接口 超时时间100ms 2、百度接口 超时时间100ms 3、本地库 */
                 log.info("收到ip查询请求,ip:{}", ip);
 
                 long st = System.currentTimeMillis();
-                IpLookupExecutor sinaLookup = ipLookupProvider.get(IpLookupEnum.SINA);
+                IpLookupExecutor sinaLookup = ipLookupProvider.get(IpLookupEnum.BAIDU);
                 IpAddress ipAddress = sinaLookup.lookup(ip);
                 if (ipAddress != null) {
                     ipLookupResult = ipIntoToipResult(ipAddress);
                 } else {
-                    IpLookupExecutor baiduLookup = ipLookupProvider.get(IpLookupEnum.BAIDU);
+                    IpLookupExecutor baiduLookup = ipLookupProvider.get(IpLookupEnum.SINA);
                     ipAddress = baiduLookup.lookup(ip);
                     if (ipAddress != null) {
                         ipLookupResult = ipIntoToipResult(ipAddress);
